@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookShelf Pro</title>
+    <title>{% block title %}BookShelf Pro{% endblock %}</title>
+
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+    <!-- Navbar -->
     <header class="navbar">
         <div class="container nav-content">
-            <div class="brand">📚 BookShelf Pro</div>
-            <div class="nav-subtitle">Discover, add, and search great books</div>
+            <div class="brand">BookShelf Pro</div>
+            <div class="nav-subtitle">Discover, add, and search books</div>
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="container main-content">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
+
 </body>
 </html>

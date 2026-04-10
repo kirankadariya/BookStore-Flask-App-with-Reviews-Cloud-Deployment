@@ -4,9 +4,12 @@ from flask import Flask, render_template, request, redirect, url_for, g
 from pymongo import MongoClient
 
 app = Flask(__name__)
-DATABASE = os.path.join(os.path.dirname(__file__), "books.db")
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
+BASE_DIR = os.path.dirname(__file__)
+DATABASE = os.path.join(BASE_DIR, "books.db")
+
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
+mongo_client = MongoClient(MONGO_URI)
 mongo_db = mongo_client["books_web_app"]
 reviews_collection = mongo_db["reviews"]
 
@@ -104,7 +107,7 @@ def seed_books():
     if count == 0:
         cursor.executemany(
             "INSERT INTO books (title, author, image_url) VALUES (?, ?, ?)",
-            books
+            books,
         )
         db.commit()
 
@@ -113,6 +116,9 @@ def seed_books():
 
 @app.route("/", methods=["GET"])
 def index():
+    init_db()
+    seed_books()
+
     search = request.args.get("search", "").strip()
     db = get_db()
 
@@ -133,13 +139,15 @@ def index():
     books_with_reviews = []
     for book in books:
         reviews = list(reviews_collection.find({"book_id": book["id"]}))
-        books_with_reviews.append({
-            "id": book["id"],
-            "title": book["title"],
-            "author": book["author"],
-            "image_url": book["image_url"],
-            "reviews": reviews
-        })
+        books_with_reviews.append(
+            {
+                "id": book["id"],
+                "title": book["title"],
+                "author": book["author"],
+                "image_url": book["image_url"],
+                "reviews": reviews,
+            }
+        )
 
     return render_template("index.html", books=books_with_reviews, search=search)
 
@@ -167,11 +175,13 @@ def add_review(book_id):
     review_text = request.form.get("review_text", "").strip()
 
     if reviewer and review_text:
-        reviews_collection.insert_one({
-            "book_id": book_id,
-            "reviewer": reviewer,
-            "review_text": review_text
-        })
+        reviews_collection.insert_one(
+            {
+                "book_id": book_id,
+                "reviewer": reviewer,
+                "review_text": review_text,
+            }
+        )
 
     return redirect(url_for("index"))
 

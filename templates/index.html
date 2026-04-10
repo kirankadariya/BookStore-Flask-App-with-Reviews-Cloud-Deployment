@@ -1,91 +1,93 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookShelf Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container nav">
+            <h1>📚 BookShelf Pro</h1>
+            <p class="subtitle">Modern Flask Book Store with Reviews</p>
+        </div>
+    </header>
 
-{% block content %}
-<section class="hero-card">
-    <div>
-        <h1>My Professional Book Shelf</h1>
-        <p>Browse your collection, add new books, search, and manage reviews with MongoDB.</p>
-    </div>
-</section>
+    <main class="container">
+        <section class="panel search-panel">
+            <h2>Search Books</h2>
+            <form method="GET" action="{{ url_for('index') }}" class="search-form">
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search by title or author"
+                    value="{{ search }}"
+                >
+                <button type="submit">Search</button>
+            </form>
+        </section>
 
-<section class="panel-grid">
-    <div class="panel form-panel">
-        <h2>Add a Book</h2>
-        <form action="{{ url_for('add_book') }}" method="POST" class="book-form">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" placeholder="Enter book title" required>
+        <section class="panel add-panel">
+            <h2>Add a New Book</h2>
+            <form method="POST" action="{{ url_for('add_book') }}" class="add-book-form">
+                <input type="text" name="title" placeholder="Book Title" required>
+                <input type="text" name="author" placeholder="Author Name" required>
+                <input type="url" name="image_url" placeholder="Book Cover Image URL" required>
+                <button type="submit">Add Book</button>
+            </form>
+        </section>
 
-            <label for="author">Author</label>
-            <input type="text" id="author" name="author" placeholder="Enter author name" required>
-
-            <label for="image_url">Cover Image URL</label>
-            <input type="url" id="image_url" name="image_url" placeholder="Paste image URL" required>
-
-            <button type="submit">Add Book</button>
-        </form>
-    </div>
-
-    <div class="panel search-panel">
-        <h2>Search Books</h2>
-        <form action="{{ url_for('index') }}" method="GET" class="search-form">
-            <input type="text" name="search" placeholder="Search by title or author" value="{{ search }}">
-            <button type="submit">Search</button>
-        </form>
-        {% if search %}
-            <p class="search-meta">Showing results for: <strong>{{ search }}</strong></p>
-        {% else %}
-            <p class="search-meta">Showing all books in your shelf.</p>
-        {% endif %}
-    </div>
-</section>
-
-<section>
-    <div class="section-header">
-        <h2>Book Shelf</h2>
-        <span class="book-count">{{ books|length }} books</span>
-    </div>
-
-    {% if books %}
-    <div class="bookshelf-grid">
-        {% for book in books %}
-        <article class="book-card">
-            <div class="book-cover-wrap">
-                <img src="{{ book['image_url'] }}" alt="Cover of {{ book['title'] }}" class="book-cover">
+        <section class="books-section">
+            <div class="section-header">
+                <h2>Book Shelf</h2>
+                {% if search %}
+                    <p class="search-info">Showing results for: <strong>{{ search }}</strong></p>
+                {% endif %}
             </div>
 
-            <div class="book-info">
-                <h3>{{ book['title'] }}</h3>
-                <p class="author">{{ book['author'] }}</p>
+            {% if books %}
+                <div class="books-grid">
+                    {% for book in books %}
+                        <article class="book-card">
+                            <img src="{{ book.image_url }}" alt="{{ book.title }} cover" class="book-cover">
 
-                <div class="reviews-section">
-                    <h4>Reviews</h4>
+                            <div class="book-content">
+                                <h3>{{ book.title }}</h3>
+                                <p class="author">by {{ book.author }}</p>
 
-                    <form action="{{ url_for('add_review', book_id=book['id']) }}" method="POST" class="book-form">
-                        <input type="text" name="reviewer" placeholder="Your name" required>
-                        <input type="text" name="review_text" placeholder="Write a review" required>
-                        <button type="submit">Add Review</button>
-                    </form>
+                                <div class="reviews-section">
+                                    <h4>Reviews</h4>
 
-                    {% if book['reviews'] %}
-                        <ul class="review-list">
-                            {% for review in book['reviews'] %}
-                                <li>
-                                    <strong>{{ review['reviewer'] }}</strong>: {{ review['review_text'] }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>No reviews yet.</p>
-                    {% endif %}
+                                    {% if book.reviews %}
+                                        <ul class="reviews-list">
+                                            {% for review in book.reviews %}
+                                                <li>
+                                                    <strong>{{ review.reviewer }}</strong>: {{ review.review_text }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="no-reviews">No reviews yet.</p>
+                                    {% endif %}
+
+                                    <form method="POST" action="{{ url_for('add_review', book_id=book.id) }}" class="review-form">
+                                        <input type="text" name="reviewer" placeholder="Your Name" required>
+                                        <textarea name="review_text" placeholder="Write your review" required></textarea>
+                                        <button type="submit">Add Review</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
                 </div>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <p>No books found for that search.</p>
-    </div>
-    {% endif %}
-</section>
-{% endblock %}
+            {% else %}
+                <div class="empty-state">
+                    <h3>No books found</h3>
+                    <p>Try another search by title or author.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
