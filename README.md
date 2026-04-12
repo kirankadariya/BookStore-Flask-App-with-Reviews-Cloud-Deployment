@@ -7,7 +7,7 @@
 - Instructor: Jalal Khalil
 
 Live Application
-https://your-app-name.onrender.com
+https://bookstore-flask-app-with-reviews-cloud.onrender.com
 
 Project Overview
 This project is a Flask-based web application deployed to the cloud.
