@@ -6,56 +6,60 @@
 - Name: Kiran Kadariya
 - Instructor: Jalal Khalil
 
-## Project Description
-BookShelf Pro is a Flask-based web application that allows users to:
-- view books in a modern bookshelf layout
-- add new books with title, author, and image URL
-- search books by title or author
-- add reviews for books
-- view existing reviews
+Live Application
+https://your-app-name.onrender.com
 
-This project continues the earlier assignments:
-- Week 6: fancy UI, real books, search, testing
-- Week 7: MongoDB integration for reviews
-- Week 12: cloud deployment and live review feature
+Project Overview
+This project is a Flask-based web application deployed to the cloud.
+The application allows users to:
 
-## Technologies Used
+- View a list of books
+- Add reviews to books
+- View existing reviews
+
+Technologies Used
 - Python
 - Flask
-- SQLite
-- MongoDB Atlas
-- HTML
-- CSS
-- Render
+- SQLite (Books)
+- MongoDB Atlas (Reviews)
+- HTML / CSS
+- Render (Cloud Deployment)
 
-## Project Structure
-project-folder/
-│
-├── app.py
-├── books.db
-├── requirements.txt
-├── templates/
-│   └── index.html
-└── static/
-    └── style.css
+Features
+Book Listing
+- Displays books with title, author, and cover image
 
-## Features
-### Book Features
-- display at least 10 real books
-- show title, author, and cover image
-- add new books
+Review Feature
+- Users can add reviews for a book
+- Users can view reviews
+- Reviews are stored in MongoDB Atlas
 
-### Search Features
-- search by title
-- search by author
-- show empty result when nothing matches
+Cloud Deployment
+- Application is publicly accessible
+- Hosted on Render
 
-### Review Features
-- add reviews to books
-- display all existing reviews
-- store reviews in MongoDB Atlas
+How to Run Locally
+pip install -r requirements.txt
+python app.py
 
-## Local Setup
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
+MongoDB Setup
+- Created MongoDB Atlas cluster
+- Added IP access (0.0.0.0/0)
+- Created database user
+- Used connection string via environment variable
+
+Deployment
+- Deployed using Render Web Service
+- Build command: pip install -r requirements.txt
+- Start command: gunicorn app:app
+- Environment variable: MONGO_URI
+
+Testing
+- App loads from public URL
+- Books display correctly
+- Reviews can be added
+- Reviews persist after refresh
+
+
+Conclusion
+This project demonstrates deploying a Flask application to the cloud with a working MongoDB-based review system.
