@@ -31,6 +31,7 @@ def close_db(exception=None):
 def init_db():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
+
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS books (
@@ -41,6 +42,7 @@ def init_db():
         )
         """
     )
+
     db.commit()
     db.close()
 
@@ -50,75 +52,103 @@ def seed_books():
         (
             "Clean Code",
             "Robert C. Martin",
-            "https://images-na.ssl-images-amazon.com/images/I/41jEbK-jG+L._SX374_BO1,204,203,200_.jpg",
-        ),
-        (
-            "The Pragmatic Programmer",
-            "Andrew Hunt, David Thomas",
-            "https://images-na.ssl-images-amazon.com/images/I/518FqJvR9aL._SX380_BO1,204,203,200_.jpg",
+            "https://m.media-amazon.com/images/I/41SH-SvWPxL.jpg",
         ),
         (
             "Atomic Habits",
             "James Clear",
-            "https://images-na.ssl-images-amazon.com/images/I/513Y5o-DYtL._SX328_BO1,204,203,200_.jpg",
+            "https://m.media-amazon.com/images/I/91bYsX41DVL.jpg",
         ),
         (
             "Deep Work",
             "Cal Newport",
-            "https://images-na.ssl-images-amazon.com/images/I/41-sN-mzwKL._SX331_BO1,204,203,200_.jpg",
+            "https://m.media-amazon.com/images/I/71g2ednj0JL.jpg",
         ),
         (
-            "The Clean Coder",
-            "Robert C. Martin",
-            "https://images-na.ssl-images-amazon.com/images/I/41xShlnTZTL._SX374_BO1,204,203,200_.jpg",
+            "The Pragmatic Programmer",
+            "Andrew Hunt and David Thomas",
+            "https://m.media-amazon.com/images/I/518FqJvR9aL.jpg",
         ),
         (
             "Refactoring",
             "Martin Fowler",
-            "https://images-na.ssl-images-amazon.com/images/I/41j9l3ZJ4vL._SX396_BO1,204,203,200_.jpg",
+            "https://m.media-amazon.com/images/I/81HBLf9wHCL.jpg",
         ),
         (
             "Design Patterns",
-            "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
-            "https://images-na.ssl-images-amazon.com/images/I/51kuc0iWo5L._SX342_SY445_QL70_ML2_.jpg",
+            "Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides",
+            "https://m.media-amazon.com/images/I/81gtKoapHFL.jpg",
         ),
         (
             "Python Crash Course",
             "Eric Matthes",
-            "https://images-na.ssl-images-amazon.com/images/I/51W1sBPO7tL._SX377_BO1,204,203,200_.jpg",
+            "https://m.media-amazon.com/images/I/71NUZ+rHNFL.jpg",
         ),
         (
             "Eloquent JavaScript",
             "Marijn Haverbeke",
-            "https://images-na.ssl-images-amazon.com/images/I/91asIC1fRwL.jpg",
+            "https://m.media-amazon.com/images/I/91asIC1fRwL.jpg",
         ),
         (
-            "You Don't Know JS Yet",
-            "Kyle Simpson",
-            "https://images-na.ssl-images-amazon.com/images/I/81kqrwS1nNL.jpg",
+            "The Hobbit",
+            "J.R.R. Tolkien",
+            "https://m.media-amazon.com/images/I/91b0C2YNSrL.jpg",
         ),
+        (
+            "1984",
+            "George Orwell",
+            "https://m.media-amazon.com/images/I/71kxa1-0mfL.jpg",
+        ),
+        (
+           "Man’s Search for Meaning",
+           "Viktor E. Frankl",
+           "https://m.media-amazon.com/images/I/71tbalAHYCL.jpg",
+
+        ),
+        (   "The Body Keeps the Score",
+            "Bessel van der Kolk",
+            "https://m.media-amazon.com/images/I/71HMyqG6MRL.jpg",
+         ),
     ]
 
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    cursor.execute("SELECT COUNT(*) FROM books")
-    count = cursor.fetchone()[0]
 
-    if count == 0:
-        cursor.executemany(
-            "INSERT INTO books (title, author, image_url) VALUES (?, ?, ?)",
-            books,
+    # Insert default books only if they do not already exist
+    for title, author, image_url in books:
+        cursor.execute(
+            """
+            SELECT id FROM books
+            WHERE LOWER(title) = LOWER(?) AND LOWER(author) = LOWER(?)
+            """,
+            (title, author),
         )
-        db.commit()
+        existing = cursor.fetchone()
 
+        if not existing:
+            cursor.execute(
+                "INSERT INTO books (title, author, image_url) VALUES (?, ?, ?)",
+                (title, author, image_url),
+            )
+
+    # Remove duplicate rows, keep the oldest one
+    cursor.execute(
+        """
+        DELETE FROM books
+        WHERE id NOT IN (
+            SELECT MIN(id)
+            FROM books
+            GROUP BY LOWER(title), LOWER(author)
+        )
+        """
+    )
+
+    db.commit()
     db.close()
 
 
 @app.route("/", methods=["GET"])
 def index():
-    init_db()
-    seed_books()
-
     search = request.args.get("search", "").strip()
     db = get_db()
 
@@ -134,7 +164,9 @@ def index():
             (like_term, like_term),
         ).fetchall()
     else:
-        books = db.execute("SELECT * FROM books ORDER BY title ASC").fetchall()
+        books = db.execute(
+            "SELECT * FROM books ORDER BY title ASC"
+        ).fetchall()
 
     books_with_reviews = []
     for book in books:
@@ -160,11 +192,21 @@ def add_book():
 
     if title and author and image_url:
         db = get_db()
-        db.execute(
-            "INSERT INTO books (title, author, image_url) VALUES (?, ?, ?)",
-            (title, author, image_url),
-        )
-        db.commit()
+
+        existing = db.execute(
+            """
+            SELECT id FROM books
+            WHERE LOWER(title) = LOWER(?) AND LOWER(author) = LOWER(?)
+            """,
+            (title, author),
+        ).fetchone()
+
+        if not existing:
+            db.execute(
+                "INSERT INTO books (title, author, image_url) VALUES (?, ?, ?)",
+                (title, author, image_url),
+            )
+            db.commit()
 
     return redirect(url_for("index"))
 
