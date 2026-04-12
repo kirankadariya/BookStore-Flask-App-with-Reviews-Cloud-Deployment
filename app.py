@@ -69,21 +69,13 @@ def seed_books():
             "Andrew Hunt and David Thomas",
             "https://m.media-amazon.com/images/I/518FqJvR9aL.jpg",
         ),
-        (
-            "Refactoring",
-            "Martin Fowler",
-            "https://m.media-amazon.com/images/I/81HBLf9wHCL.jpg",
-        ),
+        
         (
             "Design Patterns",
             "Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides",
             "https://m.media-amazon.com/images/I/81gtKoapHFL.jpg",
         ),
-        (
-            "Python Crash Course",
-            "Eric Matthes",
-            "https://m.media-amazon.com/images/I/71NUZ+rHNFL.jpg",
-        ),
+        
         (
             "Eloquent JavaScript",
             "Marijn Haverbeke",
@@ -103,6 +95,7 @@ def seed_books():
            "Man’s Search for Meaning",
            "Viktor E. Frankl",
            "https://m.media-amazon.com/images/I/71tbalAHYCL.jpg",
+
 
         ),
         (   "The Body Keeps the Score",
