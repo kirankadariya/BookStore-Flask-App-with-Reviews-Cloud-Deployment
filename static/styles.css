@@ -9,10 +9,11 @@ body {
     background: linear-gradient(135deg, #f5efe6, #e8dccb);
     color: #2d2d2d;
     min-height: 100vh;
+    line-height: 1.5;
 }
 
 .container {
-    width: 90%;
+    width: 92%;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -20,7 +21,7 @@ body {
 .topbar {
     background: linear-gradient(90deg, #5c3d2e, #7b563d);
     color: white;
-    padding: 24px 0;
+    padding: 26px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
@@ -37,14 +38,15 @@ body {
 .panel {
     background: white;
     margin-top: 24px;
-    padding: 22px;
-    border-radius: 16px;
+    padding: 24px;
+    border-radius: 18px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .panel h2 {
     margin-bottom: 14px;
     color: #5c3d2e;
+    font-size: 1.3rem;
 }
 
 .search-form,
@@ -55,6 +57,7 @@ body {
 
 .search-form {
     grid-template-columns: 1fr auto;
+    align-items: center;
 }
 
 .add-book-form input,
@@ -64,9 +67,11 @@ body {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid #d7c9b7;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.95rem;
     outline: none;
+    background: #fffdfb;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .add-book-form input:focus,
@@ -75,23 +80,25 @@ body {
 .review-form textarea:focus {
     border-color: #7b563d;
     box-shadow: 0 0 0 3px rgba(123, 86, 61, 0.12);
+    background: #ffffff;
 }
 
 button {
     background: #7b563d;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 12px 16px;
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: bold;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
     background: #5c3d2e;
     transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
 .books-section {
@@ -102,24 +109,25 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 10px;
 }
 
 .section-header h2 {
     color: #5c3d2e;
-    font-size: 1.6rem;
+    font-size: 1.7rem;
 }
 
 .search-info {
     color: #6b5b4d;
+    font-size: 0.95rem;
 }
 
 .books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 24px;
 }
 
 .book-card {
@@ -129,6 +137,9 @@ button:hover {
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     border: 1px solid #eadfce;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .book-card:hover {
@@ -138,35 +149,52 @@ button:hover {
 
 .book-cover {
     width: 100%;
-    height: 330px;
+    height: 340px;
     object-fit: cover;
+    display: block;
     background: #f3f3f3;
+    border-bottom: 1px solid #eadfce;
 }
 
 .book-content {
     padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .book-content h3 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     margin-bottom: 8px;
     color: #2d2d2d;
+    line-height: 1.4;
+    min-height: 52px;
 }
 
 .author {
     color: #7b563d;
     font-weight: bold;
     margin-bottom: 16px;
+    min-height: 24px;
+}
+
+.reviews-section {
+    margin-top: auto;
+    padding-top: 10px;
 }
 
 .reviews-section h4 {
     margin-bottom: 10px;
     color: #5c3d2e;
+    font-size: 1rem;
 }
 
 .reviews-list {
     list-style: none;
     margin-bottom: 14px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .reviews-list li {
@@ -176,12 +204,14 @@ button:hover {
     border-radius: 8px;
     margin-bottom: 10px;
     line-height: 1.45;
+    font-size: 0.94rem;
 }
 
 .no-reviews {
     margin-bottom: 14px;
     color: #777;
     font-style: italic;
+    font-size: 0.94rem;
 }
 
 .review-form {
@@ -196,7 +226,7 @@ button:hover {
 
 .empty-state {
     background: white;
-    padding: 36px;
+    padding: 40px;
     border-radius: 16px;
     text-align: center;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -205,6 +235,11 @@ button:hover {
 .empty-state h3 {
     color: #5c3d2e;
     margin-bottom: 8px;
+    font-size: 1.3rem;
+}
+
+.empty-state p {
+    color: #6b5b4d;
 }
 
 @media (max-width: 768px) {
@@ -216,7 +251,49 @@ button:hover {
         font-size: 1.6rem;
     }
 
+    .panel {
+        padding: 18px;
+    }
+
     .book-cover {
-        height: 280px;
+        height: 300px;
+    }
+
+    .book-content h3 {
+        min-height: auto;
+    }
+
+    .author {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 94%;
+    }
+
+    .topbar {
+        padding: 20px 0;
+    }
+
+    .nav h1 {
+        font-size: 1.4rem;
+    }
+
+    .subtitle {
+        font-size: 0.88rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .book-cover {
+        height: 260px;
+    }
+
+    button {
+        width: 100%;
     }
 }
